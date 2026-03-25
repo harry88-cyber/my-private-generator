@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generator Pro</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <style>
+        body { font-family: sans-serif; display: flex; background: #121212; color: white; margin: 0; overflow: hidden; }
+        .sidebar { width: 350px; padding: 20px; background: #1e1e1e; height: 100vh; border-right: 1px solid #333; overflow-y: auto; box-sizing: border-box; }
+        .preview { flex-grow: 1; display: flex; justify-content: center; align-items: center; background: #000; height: 100vh; }
+        canvas { border: 1px solid #333; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 6px; border: 1px solid #444; background: #2d2d2d; color: white; box-sizing: border-box; font-size: 14px; }
+        label { font-size: 11px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+        button { flex: 1; padding: 12px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; transition: 0.2s; }
+        .save-btn { background: #28a745; color: white; width: 100%; margin-top: 20px; font-size: 16px; }
+        .style-btn { background: #444; color: white; font-size: 12px; }
+        .style-btn:hover { background: #555; }
+        h3 { margin-top: 0; color: #007bff; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h3>Editor Controls</h3>
+    
+    <label>Main Amount</label>
+    <input type="text" id="mainAmount" value="₱2,900.00" oninput="updateText('amount', this.value)">
+    
+    <label>Sender Name</label>
+    <input type="text" id="sender" value="MAE K***** G*****" oninput="updateText('sender', this.value)">
+    
+    <label>Receiver Name</label>
+    <input type="text" id="receiver" value="Angeline Ate" oninput="updateText('receiver', this.value)">
+
+    <label>Date & Time</label>
+    <input type="text" id="dateTime" value="Mar 24, 2026 12:46 PM" oninput="updateText('date', this.value)">
+
+    <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
+    
+    <label>Notification Bar Style</label>
+    <div class="btn-group">
+        <button class="style-btn" onclick="toggleBar('ios')">iPhone</button>
+        <button class="style-btn" onclick="toggleBar('android')">Samsung</button>
+    </div>
+
+    <button class="save-btn" onclick="download()">Download HD Image</button>
+</div>
+
+<div class="preview">
+    <canvas id="c"></canvas>
+</div>
+
+<script>
+    const canvas = new fabric.Canvas('c');
+    let textObjects = {};
+
+    // Use exactly 'template.png' as we discussed
+    fabric.Image.fromURL('template.png', function(img) {
+        canvas.setDimensions({ width: img.width, height: img.height });
+        img.set({ selectable: false });
+        canvas.add(img);
+
+        // Position coordinates based on your Instapay screenshot
+        addLiveText('amount', '₱2,900.00', img.width/2, 245, 60, 'bold', 'center');
+        addLiveText('sender', 'MAE K***** G*****', 430, 480, 24, 'bold', 'left');
+        addLiveText('receiver', 'Angeline Ate', 430, 580, 24, 'normal', 'left');
+        addLiveText('date', 'Mar 24, 2026 12:46 PM', 580, 805, 18, 'normal', 'left');
+        
+        canvas.renderAll();
+    });
+
+    function addLiveText(id, defaultText, left, top, size, weight, align) {
+        const text = new fabric.IText(defaultText, {
+            left: left,
+            top: top,
+            fontSize: size,
+            fontFamily: 'Arial',
+            fontWeight: weight,
+            fill: '#2c3e50',
+            originX: align,
+            selectable: true 
+        });
+        canvas.add(text);
+        textObjects[id] = text;
+    }
+
+    function updateText(id, val) {
+        if (textObjects[id]) {
+            textObjects[id].set('text', val);
+            canvas.renderAll();
+        }
+    }
+
+    function download() {
+        const dataURL = canvas.toDataURL({ format: 'png', quality: 1, multiplier: 2 });
+        const link = document.createElement('a');
+        link.download = 'generated-receipt.png';
+        link.href = dataURL;
+        link.click();
+    }
+    
+    function toggleBar(type) {
+        alert("Switching to " + type + " status bar. This overlay will be applied in the next update.");
+    }
+</script>
+
+</body>
+</html-084`
